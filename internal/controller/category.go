@@ -6,17 +6,17 @@ import (
 )
 
 func (c *Controller) ListCategoryHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "list article handler")
+	fmt.Fprintf(w, "list category handler")
 }
 func (c *Controller) GetCategoryByIDHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "get article handler")
+	fmt.Fprintf(w, "get category handler")
 }
 func (c *Controller) CreateCategoryHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "create article handler")
+	fmt.Fprintf(w, "create category handler")
 }
 func (c *Controller) DeleteCategoryHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "delete article handler")
+	fmt.Fprintf(w, "delete category handler")
 }
 func (c *Controller) UpdateCategoryHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "update article handler")
+	fmt.Fprintf(w, "update category handler")
 }

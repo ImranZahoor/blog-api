@@ -19,6 +19,7 @@ func NewServer() *Server {
 }
 
 func (s *Server) RegisterHandlers() {
+	// article handlers
 	articleRouter := s.router.PathPrefix("/article").Subrouter()
 	articleRouter.HandleFunc("/", s.controller.ListArticleHandler).Methods(http.MethodGet)
 	articleRouter.HandleFunc("/{id}", s.controller.GetArticleByIDHandler).Methods(http.MethodGet)
@@ -32,6 +33,13 @@ func (s *Server) RegisterHandlers() {
 	categoryRouter.HandleFunc("/", s.controller.CreateCategoryHandler).Methods(http.MethodPost)
 	categoryRouter.HandleFunc("/{id}", s.controller.UpdateCategoryHandler).Methods(http.MethodPut)
 	categoryRouter.HandleFunc("/{id}", s.controller.DeleteCategoryHandler).Methods(http.MethodDelete)
+	//user handlers
+	userRouter := s.router.PathPrefix("/user").Subrouter()
+	userRouter.HandleFunc("/", s.controller.ListUserHandler).Methods(http.MethodGet)
+	userRouter.HandleFunc("/{id}", s.controller.GetUserByIDHandler).Methods(http.MethodGet)
+	userRouter.HandleFunc("/", s.controller.CreateUserHandler).Methods(http.MethodPost)
+	userRouter.HandleFunc("/{id}", s.controller.UpdateUserHandler).Methods(http.MethodPut)
+	userRouter.HandleFunc("/{id}", s.controller.DeleteUserHandler).Methods(http.MethodDelete)
 
 }
 
