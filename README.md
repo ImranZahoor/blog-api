@@ -7,4 +7,5 @@
    1. Update
    1. Delete
 1. Category
+   1. List Category
 1. User
