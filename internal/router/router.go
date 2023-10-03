@@ -25,6 +25,14 @@ func (s *Server) RegisterHandlers() {
 	articleRouter.HandleFunc("/", s.controller.CreateArticleHandler).Methods(http.MethodPost)
 	articleRouter.HandleFunc("/{id}", s.controller.UpdateArticleHandler).Methods(http.MethodPut)
 	articleRouter.HandleFunc("/{id}", s.controller.DeleteArticleHandler).Methods(http.MethodDelete)
+	//category handlers
+	categoryRouter := s.router.PathPrefix("/category").Subrouter()
+	categoryRouter.HandleFunc("/", s.controller.ListCategoryHandler).Methods(http.MethodGet)
+	categoryRouter.HandleFunc("/{id}", s.controller.GetCategoryByIDHandler).Methods(http.MethodGet)
+	categoryRouter.HandleFunc("/", s.controller.CreateCategoryHandler).Methods(http.MethodPost)
+	categoryRouter.HandleFunc("/{id}", s.controller.UpdateCategoryHandler).Methods(http.MethodPut)
+	categoryRouter.HandleFunc("/{id}", s.controller.DeleteCategoryHandler).Methods(http.MethodDelete)
+
 }
 
 func (s *Server) GetRouter() *mux.Router {
