@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/ImranZahoor/blog-api/internal/controller"
+	"github.com/ImranZahoor/blog-api/internal/repository"
 	"github.com/ImranZahoor/blog-api/internal/router"
 	"github.com/ImranZahoor/blog-api/internal/service"
 )
@@ -16,7 +17,8 @@ const (
 )
 
 func main() {
-	service := service.NewService()
+	repo := repository.NewRepository()
+	service := service.NewService(repo)
 	controller := controller.NewController(service)
 	server := router.NewServer(controller)
 	server.RegisterHandlers()
