@@ -8,17 +8,20 @@ import (
 )
 
 type (
-	Server struct {
+	server struct {
 		controller controller.Controller
 		router     *mux.Router
 	}
 )
 
-func NewServer() *Server {
-	return &Server{router: mux.NewRouter()}
+func NewServer(ctler controller.Controller) *server {
+	return &server{
+		router:     mux.NewRouter(),
+		controller: ctler,
+	}
 }
 
-func (s *Server) RegisterHandlers() {
+func (s *server) RegisterHandlers() {
 	// article handlers
 	articleRouter := s.router.PathPrefix("/article").Subrouter()
 	articleRouter.HandleFunc("/", s.controller.ListArticleHandler).Methods(http.MethodGet)
@@ -43,6 +46,6 @@ func (s *Server) RegisterHandlers() {
 
 }
 
-func (s *Server) GetRouter() *mux.Router {
+func (s *server) GetRouter() *mux.Router {
 	return s.router
 }

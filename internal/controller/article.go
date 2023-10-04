@@ -6,6 +6,8 @@ import (
 )
 
 func (c *Controller) ListArticleHandler(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	c.service.ListArticle(ctx)
 	fmt.Fprintf(w, "list article handler")
 }
 func (c *Controller) GetArticleByIDHandler(w http.ResponseWriter, r *http.Request) {

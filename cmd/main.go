@@ -6,7 +6,9 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/ImranZahoor/blog-api/internal/controller"
 	"github.com/ImranZahoor/blog-api/internal/router"
+	"github.com/ImranZahoor/blog-api/internal/service"
 )
 
 const (
@@ -14,7 +16,9 @@ const (
 )
 
 func main() {
-	server := router.NewServer()
+	service := service.NewService()
+	controller := controller.NewController(service)
+	server := router.NewServer(controller)
 	server.RegisterHandlers()
 	router := server.GetRouter()
 	if err := http.ListenAndServe(fmt.Sprintf(":%s", strconv.Itoa(PORT)), router); err != nil {
