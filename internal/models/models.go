@@ -1,13 +1,15 @@
 package models
 
+type Uuid int
+
 type Article struct {
-	Id          int64
-	Title       string
-	Description string
+	Id          Uuid   `json:"id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
 }
 
 type Category struct {
-	Id          int64
-	Name        string
-	Description string
+	Id          int64  `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
 }
