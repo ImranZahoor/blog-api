@@ -10,10 +10,10 @@ import (
 type (
 	ArticleService interface {
 		ListArticle(ctx context.Context) ([]models.Article, error)
-		GetArticleByID(ctx context.Context)
+		GetArticleByID(ctx context.Context, id models.Uuid) (*models.Article, error)
 		CreateArticle(ctx context.Context, article models.Article) error
-		UpdateArticle(ctx context.Context)
-		DeleteArticle(ctx context.Context)
+		UpdateArticle(ctx context.Context, id models.Uuid, article models.Article) error
+		DeleteArticle(ctx context.Context, id models.Uuid) error
 	}
 )
 
@@ -24,8 +24,20 @@ func (s service) ListArticle(ctx context.Context) ([]models.Article, error) {
 	}
 	return articles, nil
 }
-func (s service) GetArticleByID(ctx context.Context) {}
-func (s service) DeleteArticle(ctx context.Context)  {}
+func (s service) GetArticleByID(ctx context.Context, id models.Uuid) (*models.Article, error) {
+	articles, err := s.repository.GetArticleByID(ctx, id)
+	if err != nil {
+		return &models.Article{}, nil
+	}
+	return articles, nil
+}
+func (s service) DeleteArticle(ctx context.Context, id models.Uuid) error {
+	err := s.repository.DeleteArticle(ctx, id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
 func (s service) CreateArticle(ctx context.Context, article models.Article) error {
 	err := s.repository.CreateArticle(ctx, article)
 	if err != nil {
@@ -33,4 +45,10 @@ func (s service) CreateArticle(ctx context.Context, article models.Article) erro
 	}
 	return nil
 }
-func (s service) UpdateArticle(ctx context.Context) {}
+func (s service) UpdateArticle(ctx context.Context, id models.Uuid, article models.Article) error {
+	err := s.repository.UpdateArticle(ctx, id, article)
+	if err != nil {
+		return err
+	}
+	return nil
+}
