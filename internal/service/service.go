@@ -6,6 +6,7 @@ type (
 	Service interface {
 		ArticleService
 		CategoryService
+		UserService
 	}
 
 	service struct {

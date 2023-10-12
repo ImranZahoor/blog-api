@@ -2,6 +2,8 @@
 
 ## Run Develeopment
 
+For runing development please make sure that nodejs file watcher `nodemon` is installed
+
 `make run-dev`
 
 ## Run Production

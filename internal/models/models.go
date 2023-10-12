@@ -9,7 +9,13 @@ type Article struct {
 }
 
 type Category struct {
-	Id          int64  `json:"id"`
+	Id          Uuid   `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
+}
+
+type User struct {
+	Id    Uuid   `json:"id"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
 }
