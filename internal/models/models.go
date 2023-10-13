@@ -19,3 +19,10 @@ type User struct {
 	Name  string `json:"name"`
 	Email string `json:"email"`
 }
+
+type Status struct {
+	Error      string      `json:"error,omitempty"`
+	Message    string      `json:"message,omitempty"`
+	StatusCode int         `json:"status"`
+	Data       interface{} `json:"data,omitempty"`
+}

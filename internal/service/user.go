@@ -42,7 +42,7 @@ func (s service) DeleteUser(ctx context.Context, id models.Uuid) error {
 func (s service) CreateUser(ctx context.Context, user models.User) error {
 	err := s.repository.CreateUser(ctx, user)
 	if err != nil {
-		return fmt.Errorf("error creating user: %s", err)
+		return fmt.Errorf("error creating user: %s", err.Error())
 	}
 	return err
 }

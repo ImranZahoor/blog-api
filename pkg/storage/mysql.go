@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
 
 	"github.com/ImranZahoor/blog-api/internal/models"
 	"gorm.io/driver/mysql"
@@ -43,7 +44,8 @@ func NewMySQLStorageInit() (*MySQLStorage, error) {
 }
 
 func (ms *MySQLStorage) Create(user models.User) error {
-	err := ms.db.Create(user).Error
+	err := ms.db.Create(&user).Error
+	log.Println("MySQL::Creat::User")
 	if err != nil {
 		fmt.Print(err)
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -57,7 +59,7 @@ func (ms *MySQLStorage) Create(user models.User) error {
 }
 
 func (ms *MySQLStorage) Update(id models.Uuid, user models.User) error {
-	err := ms.db.Model(&models.User{Id: id}).Updates(user).Error
+	err := ms.db.Model(&models.User{Id: id}).Updates(&user).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return UserNotFound
