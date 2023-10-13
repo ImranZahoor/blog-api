@@ -2,6 +2,7 @@ package storage
 
 import (
 	"encoding/gob"
+	"errors"
 	"io"
 	"log"
 	"os"
@@ -105,10 +106,80 @@ func (f *FileStorage) GetByID(id models.Uuid) (models.Category, error) {
 	return category, nil
 }
 
-func (f *FileStorage) Update() error {
+func (f *FileStorage) Update(id models.Uuid, category models.Category) error {
+	var categories categoryType
+	//reset file pointer to start of file
+	_, err := f.fileHndler.Seek(0, io.SeekStart)
+	if err != nil {
+		return err
+	}
+	e := gob.NewDecoder(f.fileHndler)
+
+	if err := e.Decode(&categories); err != nil {
+		log.Println(err)
+		return err
+	}
+	if _, ok := categories[id]; !ok {
+		return errors.New("category not found")
+	}
+
+	oldCategory := categories[id]
+	oldCategory.Name = category.Name
+	oldCategory.Description = category.Description
+	categories[id] = oldCategory
+	log.Println(categories)
+
+	_, err = f.fileHndler.Seek(0, io.SeekStart)
+	if err != nil {
+		return err
+	}
+	err = f.fileHndler.Truncate(0)
+	if err != nil {
+		return err
+	}
+
+	encoder := gob.NewEncoder(f.fileHndler)
+	if err := encoder.Encode(categories); err != nil {
+		log.Println(err)
+		return err
+	}
+
 	return nil
+
 }
 
-func (f *FileStorage) Delete() error {
+func (f *FileStorage) Delete(id models.Uuid) error {
+	var categories categoryType
+	//reset file pointer to start of file
+	_, err := f.fileHndler.Seek(0, io.SeekStart)
+	if err != nil {
+		return err
+	}
+	e := gob.NewDecoder(f.fileHndler)
+
+	if err := e.Decode(&categories); err != nil {
+		log.Println(err)
+		return err
+	}
+	if _, ok := categories[id]; !ok {
+		return errors.New("category not found")
+	}
+	delete(categories, id)
+
+	_, err = f.fileHndler.Seek(0, io.SeekStart)
+	if err != nil {
+		return err
+	}
+	err = f.fileHndler.Truncate(0)
+	if err != nil {
+		return err
+	}
+
+	encoder := gob.NewEncoder(f.fileHndler)
+	if err := encoder.Encode(categories); err != nil {
+		log.Println(err)
+		return err
+	}
+
 	return nil
 }

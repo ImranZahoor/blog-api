@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -65,8 +64,44 @@ func (c *Controller) CreateCategoryHandler(w http.ResponseWriter, r *http.Reques
 	util.JsonResponse(w, http.StatusCreated, map[string]string{"message": "category created"})
 }
 func (c *Controller) DeleteCategoryHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "delete category handler")
+	vars := mux.Vars(r)
+	id := vars["id"]
+	intId, err := util.ToUUID(id)
+	if err != nil {
+		util.JsonResponse(w, http.StatusBadRequest, map[string]string{"error": "id conversion error"})
+		return
+	}
+	ctx := r.Context()
+	err = c.service.DeleteCategory(ctx, intId)
+	if err != nil {
+		util.JsonResponse(w, http.StatusBadRequest, map[string]string{"error": "deletion error"})
+		return
+	}
+	util.JsonResponse(w, http.StatusOK, map[string]string{"message": "deleted successfully"})
+
 }
 func (c *Controller) UpdateCategoryHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "update category handler")
+
+	var category models.Category
+	jsonDecoder := json.NewDecoder(r.Body)
+	err := jsonDecoder.Decode(&category)
+	if err != nil {
+		util.JsonResponse(w, http.StatusBadRequest, map[string]string{"error": "invalid payload"})
+		return
+	}
+
+	vars := mux.Vars(r)
+	id := vars["id"]
+	intId, err := util.ToUUID(id)
+	if err != nil {
+		util.JsonResponse(w, http.StatusBadRequest, map[string]string{"error": "id conversion error"})
+	}
+	ctx := r.Context()
+	err = c.service.UpdateCategory(ctx, intId, category)
+	if err != nil {
+		util.JsonResponse(w, http.StatusBadRequest, map[string]string{"error": "category update failed"})
+		return
+	}
+
+	util.JsonResponse(w, http.StatusOK, map[string]string{"message": "updated successfully"})
 }

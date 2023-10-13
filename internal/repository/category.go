@@ -32,6 +32,10 @@ func (r *repository) CreateCategory(ctx context.Context, category models.Categor
 }
 
 func (r *repository) UpdateCategory(ctx context.Context, id models.Uuid, category models.Category) error {
+	err := r.file.Update(id, category)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -44,5 +48,9 @@ func (r *repository) ListCategory(ctx context.Context) ([]models.Category, error
 }
 
 func (r *repository) DeleteCategory(ctx context.Context, id models.Uuid) error {
+	err := r.file.Delete(id)
+	if err != nil {
+		return err
+	}
 	return nil
 }
