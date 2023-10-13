@@ -20,14 +20,22 @@ const (
 func main() {
 	// Initalize In Memory Storage
 	memoryStorage := storage.NewInMemoryStorage()
+	// Initalize Database Storage
 	dbStorage, err := storage.NewMySQLStorageInit()
 
 	if err != nil {
 		fmt.Println("datbase Initalization error ")
 		panic(err)
 	}
+	// Initalize file storage
+	fileStorage, err := storage.NewFileStorage("category.txt")
+
+	if err != nil {
+		fmt.Println("file storage Initalization error")
+		panic(err)
+	}
 	// Initalize Repository
-	repo := repository.NewRepository(memoryStorage, dbStorage)
+	repo := repository.NewRepository(memoryStorage, dbStorage, fileStorage)
 	//Initalize Service
 	service := service.NewService(repo)
 	// Initalize controller/handlers

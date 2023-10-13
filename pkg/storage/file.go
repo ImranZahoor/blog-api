@@ -1,8 +1,9 @@
 package storage
 
 import (
-	"bytes"
 	"encoding/gob"
+	"io"
+	"log"
 	"os"
 
 	"github.com/ImranZahoor/blog-api/internal/models"
@@ -10,64 +11,98 @@ import (
 
 type (
 	FileStorage struct {
-		fileName   string
 		fileHndler *os.File
 	}
+
+	categoryType map[models.Uuid]models.Category
 )
 
-var (
-	categories map[models.Uuid]models.Category
-)
+var ()
 
 func NewFileStorage(fileName string) (*FileStorage, error) {
-	file, err := os.Open(fileName)
+	file, err := os.Create(fileName)
+	// file, err := os.OpenFile(fileName, os.O_CREATE|os.O_RDWR, 0644)
 	if err != nil {
 		return nil, err
 	}
-	_ = make(map[models.Uuid]models.Category)
-	fileStorage := &FileStorage{fileHndler: file, fileName: fileName}
+	fileStorage := &FileStorage{fileHndler: file}
 	return fileStorage, nil
 }
 
 func (f *FileStorage) Create(category models.Category) error {
-
-	id := models.Uuid(len(categories))
-	category.Id = id
-	categories[id] = category
-
-	var buf bytes.Buffer
-	e := gob.NewEncoder(&buf)
-	if err := e.Encode(categories); err != nil {
+	//load existing data
+	categories := make(categoryType)
+	_, err := f.fileHndler.Seek(0, io.SeekStart)
+	if err != nil {
 		return err
 	}
-	_, err := buf.WriteTo(f.fileHndler)
+	e := gob.NewDecoder(f.fileHndler)
+
+	if err := e.Decode(&categories); err != nil {
+		if err == io.EOF {
+			log.Println(err)
+		} else {
+			return err
+		}
+	}
+	//append new data
+	id := models.Uuid(len(categories)) + 1
+	category.Id = id
+	categories[id] = category
+	// reset file pointer to overwrite the contents
+	_, err = f.fileHndler.Seek(0, io.SeekStart)
 	if err != nil {
+		return err
+	}
+	err = f.fileHndler.Truncate(0)
+	if err != nil {
+		return err
+	}
+	// encode and write to file
+	encoder := gob.NewEncoder(f.fileHndler)
+	if err := encoder.Encode(categories); err != nil {
+		log.Println(err)
 		return err
 	}
 	return nil
 }
 func (f *FileStorage) List() ([]models.Category, error) {
 
-	var buf bytes.Buffer
-	var categories map[models.Uuid]models.Category
-	_, err := buf.ReadFrom(f.fileHndler)
+	var categories categoryType
+	//reset file pointer to start of file
+	_, err := f.fileHndler.Seek(0, io.SeekStart)
 	if err != nil {
 		return []models.Category{}, err
 	}
-	e := gob.NewDecoder(&buf)
+	e := gob.NewDecoder(f.fileHndler)
+
 	if err := e.Decode(&categories); err != nil {
+		log.Println(err)
 		return []models.Category{}, err
 	}
 
-	categoriesList := make([]models.Category, len(categories)-1)
+	categoriesList := make([]models.Category, 0)
 	for _, v := range categories {
 		categoriesList = append(categoriesList, v)
 	}
 	return categoriesList, nil
 }
 
-func (f *FileStorage) GetByID() error {
-	return nil
+func (f *FileStorage) GetByID(id models.Uuid) (models.Category, error) {
+	var categories categoryType
+	//reset file pointer to start of file
+	_, err := f.fileHndler.Seek(0, io.SeekStart)
+	if err != nil {
+		return models.Category{}, err
+	}
+	e := gob.NewDecoder(f.fileHndler)
+
+	if err := e.Decode(&categories); err != nil {
+		log.Println(err)
+		return models.Category{}, err
+	}
+	category := categories[id]
+	return category, nil
 }
 
 func (f *FileStorage) Update() error {

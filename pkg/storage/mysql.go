@@ -20,7 +20,7 @@ var (
 )
 
 func NewMySQLStorageInit() (*MySQLStorage, error) {
-	dsn := "root:@tcp(localhost:3306)/test"
+	dsn := "root:admin123@tcp(localhost:3306)/blog"
 
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
