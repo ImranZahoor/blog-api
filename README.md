@@ -31,3 +31,12 @@ For runing development please make sure that nodejs file watcher `nodemon` is in
 ### Delete
 
 `curl -X PUT http://localhost:5000/article/1`
+
+## Todos
+
+1. Refactor Storage code to merge in repository layer
+1. Add structured logging
+1. update server for gracefull shutdown
+1. add code for enviornment variable reading
+1. use context in all layers to cancel request
+1. add unit tests for all functions in all layers
